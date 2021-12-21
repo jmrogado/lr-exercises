@@ -1,0 +1,10 @@
+Bundle-Name: customer-data-api
+Bundle-SymbolicName: com.jmrogado.liferay.customer.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.jmrogado.liferay.customer.exception,\
+	com.jmrogado.liferay.customer.model,\
+	com.jmrogado.liferay.customer.service,\
+	com.jmrogado.liferay.customer.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../customer-data-service/service.xml
