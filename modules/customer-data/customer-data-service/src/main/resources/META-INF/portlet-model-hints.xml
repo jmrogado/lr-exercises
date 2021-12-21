@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.jmrogado.liferay.customer.model.Customer">
+		<field name="uuid" type="String" />
+		<field name="id" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="firstName" type="String" />
+		<field name="lastName" type="String" />
+		<field name="birthDate" type="Date" />
+		<field name="emailAddress" type="String" />
+	</model>
+</model-hints>
