@@ -7,6 +7,24 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
+<%@ page import="com.jmrogado.liferay.customer.model.Customer"%>
+<%@ page import="com.jmrogado.liferay.customer.constants.CustomerPortletKeys"%>
+<%@ page import="com.jmrogado.liferay.customer.service.CustomerLocalService"%>
+
+<%@ page import="com.liferay.portal.kernel.util.ParamUtil"%>
+
+<%@ page import="java.text.Format"%>
+<%@ page import="java.text.DateFormat"%>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.Calendar"%>
+<%@ page import="com.liferay.portal.kernel.util.CalendarFactoryUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil" %>
+
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
+
+<%
+    CustomerLocalService customerLocalService = (CustomerLocalService)request.getAttribute(CustomerPortletKeys.SVC_CUSTOMERS);
+%>
