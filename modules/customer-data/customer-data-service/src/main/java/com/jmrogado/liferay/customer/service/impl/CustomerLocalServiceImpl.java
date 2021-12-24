@@ -14,10 +14,10 @@
 
 package com.jmrogado.liferay.customer.service.impl;
 
+import com.jmrogado.liferay.customer.model.Customer;
 import com.jmrogado.liferay.customer.service.base.CustomerLocalServiceBaseImpl;
-
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.aop.AopService;
-
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -28,4 +28,13 @@ import org.osgi.service.component.annotations.Component;
 	service = AopService.class
 )
 public class CustomerLocalServiceImpl extends CustomerLocalServiceBaseImpl {
+	@Override
+	public Customer addCustomer(Customer customer) {
+		long id = customer.getId();
+		if (id == 0) {
+			customer.setId(CounterLocalServiceUtil.increment("com.jmrogado.liferay.customer.model.Customer"));
+		}
+
+		return super.addCustomer(customer);
+	}
 }
