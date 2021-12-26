@@ -3,17 +3,20 @@ package com.jmrogado.liferay.customer.portlet;
 import com.jmrogado.liferay.customer.constants.CustomerPortletKeys;
 import com.jmrogado.liferay.customer.model.Customer;
 import com.jmrogado.liferay.customer.service.CustomerLocalService;
+import com.liferay.captcha.util.CaptchaUtil;
+import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.util.*;
+import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.Format;
 import java.util.Date;
 import java.util.List;
 
@@ -36,8 +39,29 @@ import java.util.List;
 	service = Portlet.class
 )
 public class CustomerPortlet extends MVCPortlet {
+	protected void checkCaptcha(ActionRequest actionRequest)
+			throws CaptchaException {
+
+		CaptchaUtil.check(actionRequest);
+	}
+
 	@Override
 	public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException, PortletException {
+		try {
+			checkCaptcha(actionRequest);
+			addCustomer(actionRequest);
+
+		} catch (Exception exception) {
+			if (exception instanceof CaptchaException) {
+				SessionErrors.add(actionRequest, exception.getClass());
+				actionResponse.getRenderParameters().setValue("mvcPath", "/edit.jsp");
+			} else {
+				exception.printStackTrace();
+			}
+		}
+	}
+
+	private void addCustomer(ActionRequest actionRequest) {
 		Date now = new Date();
 
 		try {
@@ -62,8 +86,6 @@ public class CustomerPortlet extends MVCPortlet {
 		} catch (PortalException portalException) {
 			portalException.printStackTrace();
 		}
-
-		super.processAction(actionRequest, actionResponse);
 	}
 
 	@Override

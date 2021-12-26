@@ -14,6 +14,9 @@
 <aui:form action="<%= addCustomerUrl %>" name="<portlet:namespace />registerForm">
     <aui:input name="redirect" type="hidden" value="<%= themeDisplay.getURLCurrent() %>" />
 
+    <liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
+    <liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
+
     <aui:fieldset>
         <aui:input id="firstName" name="firstName" type="text" size="20"/>
         <aui:input id="lastName" name="lastName" type="text" size="50" />
@@ -30,6 +33,7 @@
 
         </aui:field-wrapper>
         <aui:input id="emailAddress" name="emailAddress" type="email" />
+        <liferay-captcha:captcha />
     </aui:fieldset>
     <aui:button-row>
         <aui:button type="submit" />
