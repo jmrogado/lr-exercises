@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -50,6 +51,8 @@ public class CustomerPortlet extends MVCPortlet {
 		try {
 			checkCaptcha(actionRequest);
 			addCustomer(actionRequest);
+			SessionMessages.add(actionRequest, "customer-added");
+			//actionResponse.getRenderParameters().setValue("mvcPath", "/edit.jsp");
 
 		} catch (Exception exception) {
 			if (exception instanceof CaptchaException) {

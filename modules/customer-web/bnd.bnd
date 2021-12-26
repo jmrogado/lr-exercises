@@ -1,4 +1,4 @@
 Bundle-Name: customer-web
-Bundle-SymbolicName: com.jmrogado.liferay.customer
+Bundle-SymbolicName: com.jmrogado.liferay.customer.web
 Bundle-Version: 1.0.0
 Export-Package: com.jmrogado.liferay.customer.constants

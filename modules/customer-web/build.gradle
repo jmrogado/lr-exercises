@@ -3,7 +3,7 @@ dependencies {
 	compileOnly group: 'com.liferay', name: 'com.liferay.captcha.api'
 	compileOnly group: 'com.liferay', name: 'com.liferay.captcha.taglib'
 
-	compile project(":modules:customer-data:customer-data-api")
+	compileOnly project(":modules:customer-data:customer-data-api")
 
 	cssBuilder group: "com.liferay", name: "com.liferay.css.builder", version: "3.0.2"
 }

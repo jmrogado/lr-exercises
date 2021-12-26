@@ -14,27 +14,34 @@
 <aui:form action="<%= addCustomerUrl %>" name="<portlet:namespace />registerForm">
     <aui:input name="redirect" type="hidden" value="<%= themeDisplay.getURLCurrent() %>" />
 
+
     <liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
     <liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 
     <aui:fieldset>
-        <aui:input id="firstName" name="firstName" type="text" size="20"/>
-        <aui:input id="lastName" name="lastName" type="text" size="50" />
-        <aui:field-wrapper label="birth-date">
+        <aui:input id="firstName" name="firstName" type="text" />
+
+        <aui:input id="lastName" name="lastName" type="text" />
+
+        <aui:field-wrapper>
+            <label class="control-label" for="<portlet:namespace />birthDate" >
+                <liferay-ui:message key="birth-date" />
+            </label>
             <liferay-ui:input-date
                 dayParam="birthDateDay"
-                dayValue="<%= birthDateDay %>"
                 monthParam="birthDateMonth"
-                monthValue="<%= birthDateMonth %>"
                 name="birthDate"
                 yearParam="birthDateYear"
-                yearValue="<%= birthDateYear %>"
+                nullable="true"
+                showDisableCheckbox="false"
             />
-
         </aui:field-wrapper>
+
         <aui:input id="emailAddress" name="emailAddress" type="email" />
+
         <liferay-captcha:captcha />
     </aui:fieldset>
+
     <aui:button-row>
         <aui:button type="submit" />
         <aui:button href="<%= redirect %>" type="cancel" />
