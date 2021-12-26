@@ -10,4 +10,5 @@ public class CustomerPortletKeys {
 
 	public static final String ATTR_CUSTOMERS = "ATTR_CUSTOMERS";
     public static final String SVC_CUSTOMERS = "SVC_CUSTOMERS";
+
 }
