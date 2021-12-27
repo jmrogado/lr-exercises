@@ -4,24 +4,36 @@
 
 <%
     String redirect = ParamUtil.getString(request, "redirect");
-
-    Calendar today = CalendarFactoryUtil.getCalendar(timeZone, locale);
-    int birthDateDay = today.get(Calendar.DATE);
-    int birthDateMonth = today.get(Calendar.MONTH);
-    int birthDateYear = today.get(Calendar.YEAR);
 %>
 
 <aui:form action="<%= addCustomerUrl %>" name="<portlet:namespace />registerForm">
     <aui:input name="redirect" type="hidden" value="<%= themeDisplay.getURLCurrent() %>" />
 
-
     <liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
     <liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 
     <aui:fieldset>
-        <aui:input id="firstName" name="firstName" type="text" />
+        <aui:input id="firstName" name="firstName" type="text">
+            <aui:validator name="required" />
+            <aui:validator name="custom"
+                errorMessage="please-enter-only-alpha-characters">
+                function(val, fieldNode, ruleValue) {
+                    var regex = new RegExp(/^[a-z\-\s]+$/i);
+                    return regex.test(val);
+                }
+            </aui:validator>
+        </aui:input>
 
-        <aui:input id="lastName" name="lastName" type="text" />
+        <aui:input id="lastName" name="lastName" type="text">
+            <aui:validator name="required" />
+            <aui:validator name="custom"
+                errorMessage="please-enter-only-alpha-characters">
+                function(val, fieldNode, ruleValue) {
+                    var regex = new RegExp(/^[a-z\-\s]+$/i);
+                    return regex.test(val);
+                }
+            </aui:validator>
+        </aui:input>
 
         <aui:field-wrapper>
             <label class="control-label" for="<portlet:namespace />birthDate" >
@@ -37,7 +49,10 @@
             />
         </aui:field-wrapper>
 
-        <aui:input id="emailAddress" name="emailAddress" type="email" />
+        <aui:input id="emailAddress" name="emailAddress" type="email">
+            <aui:validator name="required" />
+            <aui:validator name="email" />
+        </aui:input>
 
         <liferay-captcha:captcha />
     </aui:fieldset>

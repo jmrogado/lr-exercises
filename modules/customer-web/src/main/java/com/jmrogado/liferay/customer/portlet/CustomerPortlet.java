@@ -48,11 +48,26 @@ import java.util.ResourceBundle;
 	service = Portlet.class
 )
 public class CustomerPortlet extends MVCPortlet {
+	@Override
+	public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+		List<Customer> customers = _customerLocalService.getCustomers(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-	protected void checkCaptcha(ActionRequest actionRequest)
-			throws CaptchaException {
+		renderRequest.setAttribute(CustomerPortletKeys.ATTR_CUSTOMERS, customers);
+		renderRequest.setAttribute(CustomerPortletKeys.SVC_CUSTOMERS, _customerLocalService);
+		super.render(renderRequest, renderResponse);
+	}
 
-		CaptchaUtil.check(actionRequest);
+	@Override
+	public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException, PortletException {
+		try {
+			CaptchaUtil.check(actionRequest);
+			addCustomer(actionRequest);
+			SessionMessages.add(actionRequest, "customer-added");
+
+		} catch (Exception exception) {
+			SessionErrors.add(actionRequest, exception.getClass());
+			actionResponse.getRenderParameters().setValue("mvcPath", "/edit.jsp");
+		}
 	}
 
 	private void sendMail(Customer customer, Locale locale) throws AddressException {
@@ -66,19 +81,6 @@ public class CustomerPortlet extends MVCPortlet {
 		mailMessage.setBody(LanguageUtil.get(bundleResourceBundle, "thanks-for-registering"));
 
 		_mailService.sendEmail(mailMessage);
-	}
-
-	@Override
-	public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException, PortletException {
-		try {
-			checkCaptcha(actionRequest);
-			addCustomer(actionRequest);
-			SessionMessages.add(actionRequest, "customer-added");
-
-		} catch (Exception exception) {
-			SessionErrors.add(actionRequest, exception.getClass());
-			actionResponse.getRenderParameters().setValue("mvcPath", "/edit.jsp");
-		}
 	}
 
 	private void addCustomer(ActionRequest actionRequest) throws PortalException {
@@ -110,15 +112,6 @@ public class CustomerPortlet extends MVCPortlet {
 			e.printStackTrace();
 		}
 
-	}
-
-	@Override
-	public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-		List<Customer> customers = _customerLocalService.getCustomers(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-		renderRequest.setAttribute(CustomerPortletKeys.ATTR_CUSTOMERS, customers);
-		renderRequest.setAttribute(CustomerPortletKeys.SVC_CUSTOMERS, _customerLocalService);
-		super.render(renderRequest, renderResponse);
 	}
 
 	@Reference
