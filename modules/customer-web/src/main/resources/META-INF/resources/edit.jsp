@@ -11,6 +11,7 @@
 
     <liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
     <liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
+    <liferay-ui:error exception="<%= DuplicateCustomerException.class %>" message="email-address-already-registered" />
 
     <aui:fieldset>
         <aui:input id="firstName" name="firstName" type="text">

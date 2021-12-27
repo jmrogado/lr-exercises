@@ -11,6 +11,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.jmrogado.liferay.customer.model.Customer"%>
 <%@ page import="com.jmrogado.liferay.customer.constants.CustomerPortletKeys"%>
 <%@ page import="com.jmrogado.liferay.customer.service.CustomerLocalService"%>
+<%@ page import="com.jmrogado.liferay.customer.exception.DuplicateCustomerException"%>
 
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil"%>
 

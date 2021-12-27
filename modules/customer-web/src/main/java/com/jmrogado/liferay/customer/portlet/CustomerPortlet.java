@@ -1,14 +1,18 @@
 package com.jmrogado.liferay.customer.portlet;
 
 import com.jmrogado.liferay.customer.constants.CustomerPortletKeys;
+import com.jmrogado.liferay.customer.exception.DuplicateCustomerException;
+import com.jmrogado.liferay.customer.exception.NoSuchCustomerException;
 import com.jmrogado.liferay.customer.model.Customer;
 import com.jmrogado.liferay.customer.service.CustomerLocalService;
+import com.jmrogado.liferay.customer.service.persistence.CustomerUtil;
 import com.liferay.captcha.util.CaptchaUtil;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
 import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -70,6 +74,16 @@ public class CustomerPortlet extends MVCPortlet {
 		}
 	}
 
+	private void validateCustomer(ActionRequest actionRequest) throws DuplicateCustomerException {
+		String emailAddress = ParamUtil.getString(actionRequest, "emailAddress");
+		try {
+			_customerLocalService.findByEmailAddress(emailAddress);
+			throw new DuplicateCustomerException();
+		} catch (NoSuchCustomerException e) {
+			// OK
+		}
+	}
+
 	private void sendMail(Customer customer, Locale locale) throws AddressException {
 		ResourceBundle bundleResourceBundle = ResourceBundleUtil.getBundle(
 				"content.Language", locale, getClass());
@@ -84,9 +98,13 @@ public class CustomerPortlet extends MVCPortlet {
 	}
 
 	private void addCustomer(ActionRequest actionRequest) throws PortalException {
+		validateCustomer(actionRequest);
+
 		Date now = new Date();
 
 		Locale locale = PortalUtil.getLocale(actionRequest);
+		long companyId = PortalUtil.getCompanyId(actionRequest);
+		long groupId = PortalUtil.getScopeGroupId(actionRequest);
 
 		String firstName = ParamUtil.getString(actionRequest, "firstName");
 		String lastName = ParamUtil.getString(actionRequest, "lastName");
@@ -101,8 +119,8 @@ public class CustomerPortlet extends MVCPortlet {
 		customer.setEmailAddress(emailAddress);
 		customer.setCreateDate(now);
 		customer.setModifiedDate(now);
-		customer.setCompanyId(PortalUtil.getCompanyId(actionRequest));
-		customer.setGroupId(PortalUtil.getScopeGroupId(actionRequest));
+		customer.setCompanyId(companyId);
+		customer.setGroupId(groupId);
 
 		_customerLocalService.addCustomer(customer);
 
