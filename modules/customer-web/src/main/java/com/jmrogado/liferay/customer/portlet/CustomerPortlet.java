@@ -54,10 +54,18 @@ import java.util.ResourceBundle;
 public class CustomerPortlet extends MVCPortlet {
 	@Override
 	public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-		List<Customer> customers = _customerLocalService.getCustomers(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		int delta = ParamUtil.getInteger(renderRequest, "delta", 5);
+		int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
 
+		int total = _customerLocalService.getCustomersCount();
+		int start = (cur - 1) * delta;
+		int end = start + delta;
+
+		List<Customer> customers = _customerLocalService.getCustomers(start, end);
+
+		renderRequest.setAttribute(CustomerPortletKeys.ATTR_TOTAL, total);
+		renderRequest.setAttribute(CustomerPortletKeys.ATTR_DELTA, delta);
 		renderRequest.setAttribute(CustomerPortletKeys.ATTR_CUSTOMERS, customers);
-		renderRequest.setAttribute(CustomerPortletKeys.SVC_CUSTOMERS, _customerLocalService);
 		super.render(renderRequest, renderResponse);
 	}
 

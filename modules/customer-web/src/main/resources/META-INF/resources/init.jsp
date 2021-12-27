@@ -27,7 +27,3 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-    CustomerLocalService customerLocalService = (CustomerLocalService)request.getAttribute(CustomerPortletKeys.SVC_CUSTOMERS);
-%>
