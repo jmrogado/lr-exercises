@@ -1451,6 +1451,233 @@ public class CustomerPersistenceImpl
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
 		"customer.companyId = ?";
 
+	private FinderPath _finderPathFetchByEmailAddress;
+	private FinderPath _finderPathCountByEmailAddress;
+
+	/**
+	 * Returns the customer where emailAddress = &#63; or throws a <code>NoSuchCustomerException</code> if it could not be found.
+	 *
+	 * @param emailAddress the email address
+	 * @return the matching customer
+	 * @throws NoSuchCustomerException if a matching customer could not be found
+	 */
+	@Override
+	public Customer findByEmailAddress(String emailAddress)
+		throws NoSuchCustomerException {
+
+		Customer customer = fetchByEmailAddress(emailAddress);
+
+		if (customer == null) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			sb.append("emailAddress=");
+			sb.append(emailAddress);
+
+			sb.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(sb.toString());
+			}
+
+			throw new NoSuchCustomerException(sb.toString());
+		}
+
+		return customer;
+	}
+
+	/**
+	 * Returns the customer where emailAddress = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param emailAddress the email address
+	 * @return the matching customer, or <code>null</code> if a matching customer could not be found
+	 */
+	@Override
+	public Customer fetchByEmailAddress(String emailAddress) {
+		return fetchByEmailAddress(emailAddress, true);
+	}
+
+	/**
+	 * Returns the customer where emailAddress = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param emailAddress the email address
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching customer, or <code>null</code> if a matching customer could not be found
+	 */
+	@Override
+	public Customer fetchByEmailAddress(
+		String emailAddress, boolean useFinderCache) {
+
+		emailAddress = Objects.toString(emailAddress, "");
+
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {emailAddress};
+		}
+
+		Object result = null;
+
+		if (useFinderCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByEmailAddress, finderArgs);
+		}
+
+		if (result instanceof Customer) {
+			Customer customer = (Customer)result;
+
+			if (!Objects.equals(emailAddress, customer.getEmailAddress())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler sb = new StringBundler(3);
+
+			sb.append(_SQL_SELECT_CUSTOMER_WHERE);
+
+			boolean bindEmailAddress = false;
+
+			if (emailAddress.isEmpty()) {
+				sb.append(_FINDER_COLUMN_EMAILADDRESS_EMAILADDRESS_3);
+			}
+			else {
+				bindEmailAddress = true;
+
+				sb.append(_FINDER_COLUMN_EMAILADDRESS_EMAILADDRESS_2);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				if (bindEmailAddress) {
+					queryPos.add(emailAddress);
+				}
+
+				List<Customer> list = query.list();
+
+				if (list.isEmpty()) {
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByEmailAddress, finderArgs, list);
+					}
+				}
+				else {
+					Customer customer = list.get(0);
+
+					result = customer;
+
+					cacheResult(customer);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (Customer)result;
+		}
+	}
+
+	/**
+	 * Removes the customer where emailAddress = &#63; from the database.
+	 *
+	 * @param emailAddress the email address
+	 * @return the customer that was removed
+	 */
+	@Override
+	public Customer removeByEmailAddress(String emailAddress)
+		throws NoSuchCustomerException {
+
+		Customer customer = findByEmailAddress(emailAddress);
+
+		return remove(customer);
+	}
+
+	/**
+	 * Returns the number of customers where emailAddress = &#63;.
+	 *
+	 * @param emailAddress the email address
+	 * @return the number of matching customers
+	 */
+	@Override
+	public int countByEmailAddress(String emailAddress) {
+		emailAddress = Objects.toString(emailAddress, "");
+
+		FinderPath finderPath = _finderPathCountByEmailAddress;
+
+		Object[] finderArgs = new Object[] {emailAddress};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+
+		if (count == null) {
+			StringBundler sb = new StringBundler(2);
+
+			sb.append(_SQL_COUNT_CUSTOMER_WHERE);
+
+			boolean bindEmailAddress = false;
+
+			if (emailAddress.isEmpty()) {
+				sb.append(_FINDER_COLUMN_EMAILADDRESS_EMAILADDRESS_3);
+			}
+			else {
+				bindEmailAddress = true;
+
+				sb.append(_FINDER_COLUMN_EMAILADDRESS_EMAILADDRESS_2);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				if (bindEmailAddress) {
+					queryPos.add(emailAddress);
+				}
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_EMAILADDRESS_EMAILADDRESS_2 =
+		"customer.emailAddress = ?";
+
+	private static final String _FINDER_COLUMN_EMAILADDRESS_EMAILADDRESS_3 =
+		"(customer.emailAddress IS NULL OR customer.emailAddress = '')";
+
 	public CustomerPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -1480,6 +1707,10 @@ public class CustomerPersistenceImpl
 		finderCache.putResult(
 			_finderPathFetchByUUID_G,
 			new Object[] {customer.getUuid(), customer.getGroupId()}, customer);
+
+		finderCache.putResult(
+			_finderPathFetchByEmailAddress,
+			new Object[] {customer.getEmailAddress()}, customer);
 	}
 
 	private int _valueObjectFinderCacheListThreshold;
@@ -1559,6 +1790,13 @@ public class CustomerPersistenceImpl
 		finderCache.putResult(_finderPathCountByUUID_G, args, Long.valueOf(1));
 		finderCache.putResult(
 			_finderPathFetchByUUID_G, args, customerModelImpl);
+
+		args = new Object[] {customerModelImpl.getEmailAddress()};
+
+		finderCache.putResult(
+			_finderPathCountByEmailAddress, args, Long.valueOf(1));
+		finderCache.putResult(
+			_finderPathFetchByEmailAddress, args, customerModelImpl);
 	}
 
 	/**
@@ -2068,6 +2306,16 @@ public class CustomerPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
+
+		_finderPathFetchByEmailAddress = new FinderPath(
+			FINDER_CLASS_NAME_ENTITY, "fetchByEmailAddress",
+			new String[] {String.class.getName()},
+			new String[] {"emailAddress"}, true);
+
+		_finderPathCountByEmailAddress = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByEmailAddress",
+			new String[] {String.class.getName()},
+			new String[] {"emailAddress"}, false);
 
 		_setCustomerUtilPersistence(this);
 	}

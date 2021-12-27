@@ -14,6 +14,7 @@
 
 package com.jmrogado.liferay.customer.service;
 
+import com.jmrogado.liferay.customer.exception.NoSuchCustomerException;
 import com.jmrogado.liferay.customer.model.Customer;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -211,6 +212,9 @@ public interface CustomerLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Customer fetchCustomerByUuidAndGroupId(String uuid, long groupId);
+
+	public Customer findByEmailAddress(String emailAddress)
+		throws NoSuchCustomerException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();

@@ -388,6 +388,51 @@ public interface CustomerPersistence extends BasePersistence<Customer> {
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
+	 * Returns the customer where emailAddress = &#63; or throws a <code>NoSuchCustomerException</code> if it could not be found.
+	 *
+	 * @param emailAddress the email address
+	 * @return the matching customer
+	 * @throws NoSuchCustomerException if a matching customer could not be found
+	 */
+	public Customer findByEmailAddress(String emailAddress)
+		throws NoSuchCustomerException;
+
+	/**
+	 * Returns the customer where emailAddress = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param emailAddress the email address
+	 * @return the matching customer, or <code>null</code> if a matching customer could not be found
+	 */
+	public Customer fetchByEmailAddress(String emailAddress);
+
+	/**
+	 * Returns the customer where emailAddress = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param emailAddress the email address
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching customer, or <code>null</code> if a matching customer could not be found
+	 */
+	public Customer fetchByEmailAddress(
+		String emailAddress, boolean useFinderCache);
+
+	/**
+	 * Removes the customer where emailAddress = &#63; from the database.
+	 *
+	 * @param emailAddress the email address
+	 * @return the customer that was removed
+	 */
+	public Customer removeByEmailAddress(String emailAddress)
+		throws NoSuchCustomerException;
+
+	/**
+	 * Returns the number of customers where emailAddress = &#63;.
+	 *
+	 * @param emailAddress the email address
+	 * @return the number of matching customers
+	 */
+	public int countByEmailAddress(String emailAddress);
+
+	/**
 	 * Caches the customer in the entity cache if it is enabled.
 	 *
 	 * @param customer the customer

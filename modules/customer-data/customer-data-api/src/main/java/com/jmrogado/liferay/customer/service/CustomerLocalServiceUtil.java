@@ -221,6 +221,12 @@ public class CustomerLocalServiceUtil {
 		return getService().fetchCustomerByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static Customer findByEmailAddress(String emailAddress)
+		throws com.jmrogado.liferay.customer.exception.NoSuchCustomerException {
+
+		return getService().findByEmailAddress(emailAddress);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 

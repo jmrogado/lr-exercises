@@ -28,5 +28,10 @@
 			<order-column name="lastName" />
 		</order>
 
+		<!-- Finders -->
+		<finder name="EmailAddress" return-type="Customer" unique="true">
+			<finder-column name="emailAddress"/>
+		</finder>
+
 	</entity>
 </service-builder>

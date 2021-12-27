@@ -242,6 +242,14 @@ public class CustomerLocalServiceWrapper
 	}
 
 	@Override
+	public com.jmrogado.liferay.customer.model.Customer findByEmailAddress(
+			String emailAddress)
+		throws com.jmrogado.liferay.customer.exception.NoSuchCustomerException {
+
+		return _customerLocalService.findByEmailAddress(emailAddress);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 

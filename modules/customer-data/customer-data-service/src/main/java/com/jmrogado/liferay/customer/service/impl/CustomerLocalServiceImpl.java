@@ -14,8 +14,10 @@
 
 package com.jmrogado.liferay.customer.service.impl;
 
+import com.jmrogado.liferay.customer.exception.NoSuchCustomerException;
 import com.jmrogado.liferay.customer.model.Customer;
 import com.jmrogado.liferay.customer.service.base.CustomerLocalServiceBaseImpl;
+import com.jmrogado.liferay.customer.service.persistence.CustomerUtil;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.aop.AopService;
 import org.osgi.service.component.annotations.Component;
@@ -36,5 +38,10 @@ public class CustomerLocalServiceImpl extends CustomerLocalServiceBaseImpl {
 		}
 
 		return super.addCustomer(customer);
+	}
+
+	@Override
+	public Customer findByEmailAddress(String emailAddress) throws NoSuchCustomerException {
+		return CustomerUtil.findByEmailAddress(emailAddress);
 	}
 }
