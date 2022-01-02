@@ -2,9 +2,10 @@ package com.jmrogado.liferay.customer.portlet;
 
 import com.jmrogado.liferay.customer.constants.CustomerPortletKeys;
 import com.jmrogado.liferay.customer.exception.DuplicateCustomerException;
-import com.jmrogado.liferay.customer.exception.NoSuchCustomerException;
+import com.jmrogado.liferay.customer.exception.InvalidCustomerException;
 import com.jmrogado.liferay.customer.model.Customer;
 import com.jmrogado.liferay.customer.service.CustomerLocalService;
+import com.jmrogado.liferay.customer.util.CustomerPortletUtil;
 import com.liferay.captcha.util.CaptchaUtil;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
@@ -78,14 +79,17 @@ public class CustomerPortlet extends MVCPortlet {
 		}
 	}
 
-	private void validateCustomer(ActionRequest actionRequest) throws DuplicateCustomerException {
+	private void validateCustomer(ActionRequest actionRequest) throws InvalidCustomerException, DuplicateCustomerException {
+		Locale locale = PortalUtil.getLocale(actionRequest);
+
+		String firstName = ParamUtil.getString(actionRequest, "firstName");
+		String lastName = ParamUtil.getString(actionRequest, "lastName");
+		Date birthDate = ParamUtil.getDate(actionRequest, "birthDate",
+				DateFormatFactoryUtil.getDate(locale, null));
 		String emailAddress = ParamUtil.getString(actionRequest, "emailAddress");
-		try {
-			_customerLocalService.findByEmailAddress(emailAddress);
-			throw new DuplicateCustomerException();
-		} catch (NoSuchCustomerException e) {
-			// OK
-		}
+
+		CustomerPortletUtil.validateRequiredFields(firstName, lastName, birthDate, emailAddress);
+		CustomerPortletUtil.validateUniqueCustomer(_customerLocalService, emailAddress);
 	}
 
 	private void sendMail(Customer customer, Locale locale) throws AddressException {
